@@ -1,93 +1,132 @@
-# packet_sniffer
+# Rust Packet Sniffer
 
+A Rust-based network packet sniffer that captures and analyzes network packets with advanced filtering and statistics. This tool is designed to monitor network traffic on a specified interface, filter packets by protocol (IP, TCP, UDP, ICMP, or all), and provide detailed packet statistics.
 
+## Features
 
-## Getting started
+- **Packet Capture**: Captures Ethernet packets on a specified network interface using the `pnet` library.
+- **Protocol Filtering**: Supports filtering packets by protocol (`ip`, `tcp`, `udp`, `icmp`, or `all`).
+- **Verbose Output**: Optionally displays detailed packet information, including TCP flags, sequence numbers, and payload sizes.
+- **Packet Statistics**: Tracks and displays the total number of packets, as well as counts for IPv4, TCP, UDP, and ICMP packets using thread-safe atomic counters.
+- **Graceful Shutdown**: Handles `Ctrl+C` to display final statistics and exit cleanly.
+- **Customizable Packet Count**: Allows specifying the number of packets to capture before exiting.
+- **Colorized Output**: Uses the `colored` crate to provide a visually appealing console output with color-coded protocol information.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## Prerequisites
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+To build and run this project, you need the following:
 
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/Tokyo-04/packet_sniffer.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.com/Tokyo-04/packet_sniffer/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+- **Rust**: Install the latest stable version of Rust using [rustup](https://rustup.rs/).
+- **Root Privileges**: The sniffer requires root privileges to capture packets
+- **libpcap**: The `pnet` library requires `libpcap` for packet capturing. Install it on your system:
+  - **Ubuntu/Debian**: `sudo apt-get install libpcap-dev`
+  - **Fedora**: `sudo dnf install libpcap-devel`
+  - **macOS**: `brew install libpcap`
+- **Network Interface**: A network interface that is up and has an IP address assigned (non-loopback).
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://gitlab.com/Tokyo-04/packet_sniffer.git
+   cd packet_sniffer
+   ```
+
+2. **Build the Project**:
+   ```bash
+   cargo build --release
+   ```
+
+3. **Run the Sniffer**:
+   Since the program requires root privileges, use `sudo` to run it:
+   ```bash
+   sudo ./target/release/packet_sniffer
+   ```
 
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+The program can be run with various command-line arguments to customize its behavior. Below is the help output:
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+```bash
+Rust Packet Sniffer 0.2.0
+A network packet sniffer with advanced filtering and statistics
+
+USAGE:
+    rust-packet-sniffer [OPTIONS]
+
+OPTIONS:
+    -i, --interface <INTERFACE>    Network interface to capture packets from
+    -f, --filter <FILTER>         Filter packets (e.g., 'tcp', 'udp', 'ip', 'icmp', 'all') [default: all]
+    -c, --count <COUNT>           Number of packets to capture before exiting
+    -v, --verbose                 Enable verbose output
+    -h, --help                    Print help information
+    -V, --version                 Print version information
+```
+
+### Examples
+
+1. **Capture All Packets on Default Interface**:
+   ```bash
+   sudo ./target/release/packet_sniffer
+   ```
+
+2. **Capture TCP Packets on a Specific Interface**:
+   ```bash
+   sudo ./target/release/packet_sniffer -i eth0 -f tcp
+   ```
+
+3. **Capture 100 Packets with Verbose Output**:
+   ```bash
+   sudo ./target/release/packet_sniffer -i eth0 -c 100 -v
+   ```
+
+4. **Capture ICMP Packets Only**:
+   ```bash
+   sudo ./target/release/packet_sniffer -f icmp
+   ```
+
+### Output
+
+The sniffer displays real-time packet information with color-coded output. For example:
+
+```
+Capturing on interface: eth0
+[2025-08-01T10:57:00Z] IPv4 192.168.1.100 -> 8.8.8.8 (TTL: 64)
+  TCP 12345 -> 80
+[2025-08-01T10:57:01Z] IPv4 192.168.1.100 -> 8.8.8.8 (TTL: 64)
+  UDP 12345 -> 53 (Length: 45)
+```
+
+When exiting (via `Ctrl+C` or reaching the packet count), it shows statistics:
+
+```
+Packet Statistics:
+Total Packets: 150
+IPv4 Packets: 150
+TCP Packets: 100
+UDP Packets: 40
+ICMP Packets: 10
+```
+
+## Limitations
+
+- **Ethernet Only**: The sniffer currently supports only Ethernet channels.
+- **IPv4 Only**: Only IPv4 packets are processed; IPv6 support is not implemented.
+- **Root Privileges**: Requires root access due to low-level network operations.
+- **Platform-Specific**: Some features may behave differently depending on the operating system and network interface.
 
 ## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+Contributions are welcome! To contribute:
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature/your-feature`).
+3. Commit your changes (`git commit -m "Add your feature"`).
+4. Push to the branch (`git push origin feature/your-feature`).
+5. Open a pull request.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+Please ensure your code follows the Rust style guidelines and includes appropriate tests.
 
 ## License
-For open source projects, say how it is licensed.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
