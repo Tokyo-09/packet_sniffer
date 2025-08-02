@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment {
+        // Ensure Rust is in PATH
+        PATH = "$PATH:/home/jenkins/.cargo/bin"
+    }
 
     stages {
         stage('Build') {
