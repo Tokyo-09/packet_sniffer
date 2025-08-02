@@ -1,0 +1,23 @@
+stages:
+  - build
+
+variables:
+  CARGO_HOME: $CI_PROJECT_DIR/.cargo
+  RUST_VERSION: stable
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .cargo/
+    - target/
+
+build_job:
+  stage: build
+  image: rust:${RUST_VERSION}
+  script:
+    - rustup update ${RUST_VERSION} && rustup default ${RUST_VERSION}
+    - cargo build --verbose
+  artifacts:
+    paths:
+      - target/release/rust-packet-sniffer
+    expire_in: 1 week
